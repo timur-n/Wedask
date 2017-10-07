@@ -177,12 +177,15 @@ function ds(radius) {
     var floor_height = 5;
 
     drone.chkpt('ds-start');
-    drone.box(blocks.glowstone, 1, 1, diameter + 5);
+    // The road to ds
+    drone.box(blocks.glowstone, 1, 1, radius);
+    // The corner point for easy deletion
     drone
         .up(5)
         .left(radius)
         .box(material, 1,1,1);
     drone.chkpt('ds-bottom-corner');
+    // The sphere
     drone.sphere0(material, radius);
 
     function make_floor(height, floor_radius) {
@@ -194,7 +197,7 @@ function ds(radius) {
         drone.cylinder(floor_material, floor_radius);
     }
 
-
+    // The floors
     var floor_radius;
     var height = 0;
     var to_center = 0;
@@ -209,6 +212,74 @@ function ds(radius) {
             make_floor(radius * 2 - height, floor_radius);
         }
     }
+
+    //ladder
+    drone.move('ds-start')
+    .ladder2(diameter+2);
+
+
+}
+
+function ladder2(height) {
+    var drone = this;
+
+    drone
+    .box(blocks.stone,1,height,1)
+    .ladder(height);
+}
+
+function p_a(max) {
+    var drone = this;
+
+    var area1, area2, halfPerimetre1, halfPerimetre2;
+
+    console.log("Searching...");
+    for (var a = 1; a <= max; a++) {
+        for (var b = 1; b <= max; b++) {
+            for (var c = 1; c <= max; c++) {
+                for (var d = 1; d <= max; d++) {
+                    area1 = a*b;
+                    area2 = c*d
+                    halfPerimetre1 = a+b
+                    halfPerimetre2 = c+d
+                    if (halfPerimetre1 === halfPerimetre2 
+                        && area1 === area2 
+                        && a !== c 
+                        && b !== d
+                        && a !== d
+                        && b !== c) {
+                        console.log("Found: " + a + "," + b + " and " + c + "," + d);
+                    }
+
+                }   
+
+            }    
+        }    
+    }    
+}
+
+function sauron_tower(material, radius, height){
+    var drone = this;
+
+    // floor
+    drone.cylinder(blocks.glowstone, radius, 1)
+    // walls 1st storey
+    drone.cylinder0(material, radius, height )
+
+    drone.up(height)
+    // 2nd floor
+    drone.cylinder(blocks.glowstone, radius , 1)
+    drone.fwd(1).right(1)
+    // walls
+    drone.cylinder0(material, radius -1, height *0.5)
+
+    //3rd floor
+    drone.up(height *0.5)
+    drone.cylinder(blocks.glowstone, radius -1, 1)
+    drone.fwd(1).right(1)
+    drone.cylinder0(material, radius -2, height *0.25)
+
+
 }
 
 Drone.extend(road);
@@ -218,4 +289,6 @@ Drone.extend(mush_house);
 Drone.extend(army_base);
 Drone.extend(train_up)
 Drone.extend(ds)
-
+Drone.extend(ladder2)
+Drone.extend(p_a)
+Drone.extend(sauron_tower)
